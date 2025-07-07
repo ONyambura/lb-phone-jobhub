@@ -6,13 +6,14 @@ interface CreateJobFormProps {
   onClose: () => void
   onSubmit: (jobData: Omit<JobAd, 'id' | 'createdAt' | 'applications' | 'citizenId'>) => void
   editingJob?: JobAd
+  businessLogo?: string
 }
 
-export const CreateJobForm: React.FC<CreateJobFormProps> = ({ onClose, onSubmit, editingJob }) => {
+export const CreateJobForm: React.FC<CreateJobFormProps> = ({ onClose, onSubmit, editingJob, businessLogo }) => {
   const [formData, setFormData] = useState({
     businessId: editingJob?.businessId || 'business-1',
     businessName: editingJob?.businessName || 'My Business',
-    businessLogo: editingJob?.businessLogo || '',
+    businessLogo: editingJob?.businessLogo || businessLogo || '',
     jobTitle: editingJob?.jobTitle || '',
     jobDescription: editingJob?.jobDescription || '',
     hourlyPay: editingJob?.hourlyPay || 25,
@@ -126,17 +127,6 @@ export const CreateJobForm: React.FC<CreateJobFormProps> = ({ onClose, onSubmit,
               className="form-textarea"
               rows={4}
               required
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Business Logo URL</label>
-            <input
-              type="url"
-              value={formData.businessLogo}
-              onChange={(e) => handleInputChange('businessLogo', e.target.value)}
-              placeholder="https://example.com/logo.jpg"
-              className="form-input"
             />
           </div>
 

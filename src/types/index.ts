@@ -35,6 +35,7 @@ export interface AppConfig {
   theme: 'light' | 'dark'
   citizenId: string
   businessId?: string
+  businessLogo?: string
   isBoss: boolean
 }
 

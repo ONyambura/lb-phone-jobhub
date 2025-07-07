@@ -150,11 +150,11 @@ export const JobHub: React.FC = () => {
             )}
             {config.isBoss && (
               <button
-                className="btn btn-primary btn-small"
+                className="post-job-btn"
                 onClick={() => setShowCreateForm(true)}
               >
-                <Plus size={16} />
-                Post Job
+                <Plus size={14} />
+                Post
               </button>
             )}
           </div>
@@ -256,32 +256,10 @@ export const JobHub: React.FC = () => {
           }}
           onSubmit={editingJob ? handleUpdateJob : handleCreateJob}
           editingJob={editingJob || undefined}
+          businessLogo={config.businessLogo}
         />
       )}
 
-      {activeTab === 'my-ads' && displayedJobs.length > 0 && (
-        <div className="floating-actions">
-          {displayedJobs.map((job) => (
-            <div key={job.id} className="job-actions">
-              <button
-                className="btn btn-secondary btn-small"
-                onClick={() => {
-                  setEditingJob(job)
-                  setShowCreateForm(true)
-                }}
-              >
-                Edit
-              </button>
-              <button
-                className="btn btn-danger btn-small"
-                onClick={() => handleDeleteJob(job)}
-              >
-                Delete
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
     </div>
   )
 }

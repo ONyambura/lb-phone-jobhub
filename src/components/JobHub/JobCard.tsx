@@ -84,18 +84,56 @@ export const JobCard: React.FC<JobCardProps> = ({
       </div>
 
       <div className="job-card-actions">
-        <button className="btn btn-secondary" onClick={() => onViewDetails(job)}>
-          <Eye size={16} />
-          View Details
-        </button>
-        {onApply && !hasApplied && daysUntilExpiry > 0 && (
-          <button className="btn btn-primary" onClick={() => onApply(job.id)}>
-            Apply Now
-          </button>
+        {showApplications ? (
+          <>
+            <button className="btn btn-secondary" onClick={() => onViewDetails(job)}>
+              <Eye size={14} />
+              Manage
+            </button>
+          </>
+        ) : (
+          <>
+            <button className="btn btn-secondary" onClick={() => onViewDetails(job)}>
+              <Eye size={14} />
+              Details
+            </button>
+            {onApply && !hasApplied && daysUntilExpiry > 0 && (
+              <button className="btn btn-primary" onClick={() => onApply(job.id)}>
+                Apply
+              </button>
+            )}
+            {hasApplied && (
+              <button className="btn btn-disabled" disabled>
+                Applied
+              </button>
+            )}
+          </>
         )}
-        {hasApplied && (
-          <button className="btn btn-disabled" disabled>
-            Applied
+        {showApplications && (
+          <button
+            className="btn btn-danger btn-small"
+            onClick={() => {
+              components.setContextMenu({
+                title: 'Job Actions',
+                buttons: [
+                  {
+                    title: 'Edit Job',
+                    cb: () => {
+                      // This would be handled by parent component
+                    }
+                  },
+                  {
+                    title: 'Delete Job',
+                    color: 'red',
+                    cb: () => {
+                      // This would be handled by parent component
+                    }
+                  }
+                ]
+              })
+            }}
+          >
+            •••
           </button>
         )}
       </div>
