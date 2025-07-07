@@ -1,6 +1,8 @@
 import { ReactNode, useEffect, useRef, useState } from 'react'
 import './App.css'
 import Frame from './components/Frame'
+import { JobHub } from './components/JobHub/JobHub'
+import './components/JobHub/JobHub.css'
 
 const devMode = !window?.['invokeNative']
 
@@ -24,217 +26,7 @@ const App = () => {
     return (
         <AppProvider>
             <div className="app" ref={appDiv}>
-                <div className="app-wrapper">
-                    <Header />
-                    <div className="button-wrapper">
-                        <button
-                            onClick={() => {
-                                components.setPopUp({
-                                    title: 'Popup Menu',
-                                    description: 'Confirm your choice',
-                                    buttons: [
-                                        {
-                                            title: 'Cancel',
-                                            color: 'red',
-                                            cb: () => {
-                                                console.log('Cancel')
-                                            }
-                                        },
-                                        {
-                                            title: 'Confirm',
-                                            color: 'blue',
-                                            cb: () => {
-                                                console.log('Confirm')
-                                            }
-                                        }
-                                    ]
-                                })
-                            }}
-                        >
-                            Popup Menu
-                        </button>
-                        <button
-                            onClick={() => {
-                                components.setContextMenu({
-                                    title: 'Context menu',
-                                    buttons: [
-                                        {
-                                            title: 'Phone Notification',
-                                            color: 'blue',
-                                            cb: () => {
-                                                sendNotification({ title: notificationText })
-                                            }
-                                        },
-                                        {
-                                            title: 'GTA Notification',
-                                            color: 'red',
-                                            cb: () => {
-                                                fetchNui('drawNotification', { message: notificationText })
-                                            }
-                                        }
-                                    ]
-                                })
-                            }}
-                        >
-                            Context menu
-                        </button>
-                        <button
-                            onClick={() => {
-                                components.setGifPickerVisible({
-                                    onSelect(gif) {
-                                        components.setPopUp({
-                                            title: 'Selected GIF',
-                                            attachment: { src: gif },
-                                            buttons: [
-                                                {
-                                                    title: 'OK'
-                                                }
-                                            ]
-                                        })
-                                    }
-                                })
-                            }}
-                        >
-                            Gif Selector
-                        </button>
-                        <button
-                            onClick={() => {
-                                components.setGallery({
-                                    includeVideos: true,
-                                    includeImages: true,
-                                    allowExternal: true,
-                                    multiSelect: false,
-
-                                    onSelect(data) {
-                                        components.setPopUp({
-                                            title: 'Selected media',
-                                            attachment: { src: Array.isArray(data) ? data[0].src : data.src },
-                                            buttons: [
-                                                {
-                                                    title: 'OK'
-                                                }
-                                            ]
-                                        })
-                                    }
-                                })
-                            }}
-                        >
-                            Gallery Selector
-                        </button>
-                        <button
-                            onClick={() => {
-                                components.setEmojiPickerVisible({
-                                    onSelect: (emoji) => {
-                                        components.setEmojiPickerVisible(false)
-                                        components.setPopUp({
-                                            title: 'Selected emoji',
-                                            description: emoji.emoji,
-                                            buttons: [
-                                                {
-                                                    title: 'OK'
-                                                }
-                                            ]
-                                        })
-                                    }
-                                })
-                            }}
-                        >
-                            Emoji Selector
-                        </button>
-                        <button
-                            onClick={() => {
-                                components.setColorPicker({
-                                    onSelect(color) {},
-                                    onClose(color) {
-                                        components.setPopUp({
-                                            title: 'Selected color',
-                                            description: color,
-                                            buttons: [
-                                                {
-                                                    title: 'OK'
-                                                }
-                                            ]
-                                        })
-                                    }
-                                })
-                            }}
-                        >
-                            Color Picker
-                        </button>
-                        <button
-                            onClick={() => {
-                                useCamera(
-                                    (url) => {
-                                        components.setPopUp({
-                                            title: 'Media taken',
-                                            attachment: { src: url },
-                                            buttons: [
-                                                {
-                                                    title: 'OK'
-                                                }
-                                            ]
-                                        })
-                                    },
-                                    {
-                                        default: {
-                                            type: 'Photo', // 'Photo' | 'Video' | 'Landscape'
-                                            flash: false,
-                                            camera: 'rear' // 'rear' | 'front'
-                                        },
-                                        permissions: {
-                                            toggleFlash: true,
-                                            flipCamera: true,
-                                            takePhoto: true,
-                                            takeVideo: true,
-                                            takeLandscapePhoto: true
-                                        }
-                                    }
-                                )
-                            }}
-                        >
-                            Camera Component
-                        </button>
-                        <button
-                            onClick={() => {
-                                setGameRender((prev) => !prev)
-                            }}
-                        >
-                            Game render
-                        </button>
-                        {gameRender && (
-                            <GameRender
-                                remove={(url, blob) => {
-                                    setGameRender(false)
-
-                                    if (url) {
-                                        components.setPopUp({
-                                            title: 'Photo taken',
-                                            attachment: { src: url },
-                                            buttons: [
-                                                {
-                                                    title: 'Close',
-                                                    color: 'red'
-                                                },
-                                                {
-                                                    title: 'Save',
-                                                    color: 'blue',
-                                                    cb: async () => {
-                                                        const url = await components.uploadMedia('Image', blob)
-
-                                                        if (!url) return
-
-                                                        components.saveToGallery(url)
-                                                    }
-                                                }
-                                            ]
-                                        })
-                                    }
-                                }}
-                            />
-                        )}
-                        <input placeholder="Notification text" onChange={(e: any) => setNotificationText(e.target.value)}></input>
-                    </div>
-                </div>
+                <JobHub />
             </div>
         </AppProvider>
     )
@@ -252,7 +44,7 @@ const Header = () => {
 
     return (
         <div className="header">
-            <div className="title">Custom App Template</div>
+            <div className="title">Job Hub</div>
             <div className="subtitle">React TS</div>
             <a className="subtitle">{direction}</a>
         </div>
