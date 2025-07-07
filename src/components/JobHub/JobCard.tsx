@@ -10,6 +10,8 @@ interface JobCardProps {
   onViewDetails: (job: JobAd) => void
   onApply?: (jobId: string) => void
   showApplications?: boolean
+  onEdit?: (job: JobAd) => void
+  onDelete?: (job: JobAd) => void
 }
 
 export const JobCard: React.FC<JobCardProps> = ({
@@ -18,7 +20,9 @@ export const JobCard: React.FC<JobCardProps> = ({
   onToggleFavorite,
   onViewDetails,
   onApply,
-  showApplications = false
+  showApplications = false,
+  onEdit,
+  onDelete
 }) => {
   const daysUntilExpiry = Math.ceil(
     (new Date(job.validUntilDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
@@ -109,31 +113,27 @@ export const JobCard: React.FC<JobCardProps> = ({
             )}
           </>
         )}
-        {showApplications && (
+        {showApplications && onEdit && onDelete && (
           <button
-            className="btn btn-danger btn-small"
+            className="menu-btn"
             onClick={() => {
               components.setContextMenu({
                 title: 'Job Actions',
                 buttons: [
                   {
                     title: 'Edit Job',
-                    cb: () => {
-                      // This would be handled by parent component
-                    }
+                    cb: () => onEdit(job)
                   },
                   {
                     title: 'Delete Job',
                     color: 'red',
-                    cb: () => {
-                      // This would be handled by parent component
-                    }
+                    cb: () => onDelete(job)
                   }
                 ]
               })
             }}
           >
-            •••
+            ⋯
           </button>
         )}
       </div>

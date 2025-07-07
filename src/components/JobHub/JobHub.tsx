@@ -140,7 +140,7 @@ export const JobHub: React.FC = () => {
   const displayedJobs = getDisplayedJobs()
 
   return (
-    <div className={`job-hub ${config.theme}`}>
+    <div className={`job-hub ${config.theme}`} data-theme={config.theme}>
       <div className="job-hub-header">
         <div className="header-top">
           <h1 className="app-title">Job Hub</h1>
@@ -148,42 +148,7 @@ export const JobHub: React.FC = () => {
             {config.isDev && (
               <div className="dev-indicator">DEV</div>
             )}
-            {config.isBoss && (
-              <button
-                className="post-job-btn"
-                onClick={() => setShowCreateForm(true)}
-              >
-                <Plus size={14} />
-                Post
-              </button>
-            )}
           </div>
-        </div>
-
-        <div className="tab-navigation">
-          <button
-            className={`tab-btn ${activeTab === 'browse' ? 'active' : ''}`}
-            onClick={() => setActiveTab('browse')}
-          >
-            <Briefcase size={20} />
-            Browse
-          </button>
-          <button
-            className={`tab-btn ${activeTab === 'favorites' ? 'active' : ''}`}
-            onClick={() => setActiveTab('favorites')}
-          >
-            <Heart size={20} />
-            Favorites
-          </button>
-          {config.isBoss && (
-            <button
-              className={`tab-btn ${activeTab === 'my-ads' ? 'active' : ''}`}
-              onClick={() => setActiveTab('my-ads')}
-            >
-              <User size={20} />
-              My Ads
-            </button>
-          )}
         </div>
 
         {activeTab === 'browse' && (
@@ -231,12 +196,43 @@ export const JobHub: React.FC = () => {
                 onViewDetails={setSelectedJob}
                 onApply={activeTab !== 'my-ads' ? handleApply : undefined}
                 showApplications={activeTab === 'my-ads'}
+                onEdit={activeTab === 'my-ads' ? (job) => {
+                  setEditingJob(job)
+                  setShowCreateForm(true)
+                } : undefined}
+                onDelete={activeTab === 'my-ads' ? handleDeleteJob : undefined}
               />
             ))}
           </div>
         )}
       </div>
 
+      {/* Bottom Tab Navigation */}
+      <div className="bottom-navigation">
+        <button
+          className={`nav-btn ${activeTab === 'browse' ? 'active' : ''}`}
+          onClick={() => setActiveTab('browse')}
+        >
+          <Briefcase size={20} />
+          <span>Browse</span>
+        </button>
+        <button
+          className={`nav-btn ${activeTab === 'favorites' ? 'active' : ''}`}
+          onClick={() => setActiveTab('favorites')}
+        >
+          <Heart size={20} fill={activeTab === 'favorites' ? 'currentColor' : 'none'} />
+          <span>Favorites</span>
+        </button>
+        {config.isBoss && (
+          <button
+            className={`nav-btn ${activeTab === 'my-ads' ? 'active' : ''}`}
+            onClick={() => setActiveTab('my-ads')}
+          >
+            <User size={20} />
+            <span>My Ads</span>
+          </button>
+        )}
+      </div>
       {selectedJob && (
         <JobDetails
           job={selectedJob}

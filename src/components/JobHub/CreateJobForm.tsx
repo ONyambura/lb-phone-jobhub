@@ -19,9 +19,8 @@ export const CreateJobForm: React.FC<CreateJobFormProps> = ({ onClose, onSubmit,
     hourlyPay: editingJob?.hourlyPay || 25,
     validUntilDate: editingJob?.validUntilDate || '',
     photos: editingJob?.photos || [],
-    phoneNumber: editingJob?.phoneNumber || '',
-    streetName: editingJob?.streetName || '',
-    location: editingJob?.location || null
+    includePhone: editingJob?.phoneNumber ? true : false,
+    includeLocation: editingJob?.streetName || editingJob?.location ? true : false
   })
 
   const [newPhotoUrl, setNewPhotoUrl] = useState('')
@@ -71,7 +70,19 @@ export const CreateJobForm: React.FC<CreateJobFormProps> = ({ onClose, onSubmit,
       return
     }
 
-    onSubmit(formData)
+    // Prepare the final data based on toggles
+    const finalData = {
+      ...formData,
+      phoneNumber: formData.includePhone ? 'BACKEND_WILL_SET' : undefined,
+      streetName: formData.includeLocation ? 'BACKEND_WILL_SET' : undefined,
+      location: formData.includeLocation ? { x: 0, y: 0, z: 0 } : undefined
+    }
+    
+    // Remove the toggle fields before submitting
+    delete finalData.includePhone
+    delete finalData.includeLocation
+    
+    onSubmit(finalData)
   }
 
   return (
@@ -122,61 +133,30 @@ export const CreateJobForm: React.FC<CreateJobFormProps> = ({ onClose, onSubmit,
           </div>
 
           <div className="form-group">
-            <label>Contact Phone *</label>
-            <input
-              type="tel"
-              value={formData.phoneNumber}
-              onChange={(e) => handleInputChange('phoneNumber', e.target.value)}
-              placeholder="555-0123"
-              className="form-input"
-              required
-            />
+            <div className="toggle-option">
+              <label className="toggle-label">
+                <input
+                  type="checkbox"
+                  checked={formData.includePhone}
+                  onChange={(e) => handleInputChange('includePhone', e.target.checked)}
+                  className="toggle-checkbox"
+                />
+                <span className="toggle-text">Include Contact Phone</span>
+              </label>
+            </div>
           </div>
 
           <div className="form-group">
-            <label>Location</label>
-            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-              <input
-                type="text"
-                value={formData.streetName}
-                onChange={(e) => handleInputChange('streetName', e.target.value)}
-                placeholder="Street name or area"
-                className="form-input"
-                style={{ flex: 1 }}
-              />
-              <button
-                type="button"
-                className="btn btn-secondary btn-small"
-                onClick={() => {
-                  // This will send a message to Lua to get current position
-                  if (typeof fetchNui !== 'undefined') {
-                    fetchNui('getCurrentPosition').then((position: any) => {
-                      if (position) {
-                        setFormData(prev => ({
-                          ...prev,
-                          location: position.coords,
-                          streetName: position.streetName || prev.streetName
-                        }))
-                      }
-                    }).catch(() => {
-                      components.setPopUp({
-                        title: 'Error',
-                        description: 'Could not get current position.',
-                        buttons: [{ title: 'OK' }]
-                      })
-                    })
-                  } else {
-                    // Dev mode - mock position
-                    setFormData(prev => ({
-                      ...prev,
-                      location: { x: 100, y: 200, z: 30 },
-                      streetName: prev.streetName || 'Mock Street'
-                    }))
-                  }
-                }}
-              >
-                Pin Position
-              </button>
+            <div className="toggle-option">
+              <label className="toggle-label">
+                <input
+                  type="checkbox"
+                  checked={formData.includeLocation}
+                  onChange={(e) => handleInputChange('includeLocation', e.target.checked)}
+                  className="toggle-checkbox"
+                />
+                <span className="toggle-text">Pin Location</span>
+              </label>
             </div>
           </div>
 

@@ -28,26 +28,24 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({ filters, onFilters
   }
 
   const hasActiveFilters = filters.query || filters.minPay > 0 || filters.maxPay > 0 || filters.businessName
+  const hasSearchQuery = filters.query.length > 0
 
   return (
     <div className="search-filters">
       <div className="search-bar">
         <div className="search-input-wrapper">
-          <Search size={20} className="search-icon" />
+          {hasSearchQuery ? (
+            <X size={20} className="search-icon clickable" onClick={clearFilters} />
+          ) : (
+            <Search size={20} className="search-icon" />
+          )}
           <input
             type="text"
             placeholder="Search jobs..."
             value={filters.query}
-          onChange={(e) => {
-            handleFilterChange('query', e.target.value)
-          }}
+            onChange={(e) => handleFilterChange('query', e.target.value)}
             className="search-input"
           />
-          {hasActiveFilters && (
-            <button className="clear-search" onClick={clearFilters}>
-              <X size={16} />
-            </button>
-          )}
         </div>
         <button
           className={`filter-toggle ${showAdvanced ? 'active' : ''}`}
