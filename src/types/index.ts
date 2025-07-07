@@ -12,6 +12,9 @@ export interface JobAd {
   citizenId: string
   applications: JobApplication[]
   isFavorited?: boolean
+  phoneNumber?: string
+  streetName?: string
+  location?: { x: number; y: number; z: number }
 }
 
 export interface JobApplication {

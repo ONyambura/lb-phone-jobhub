@@ -38,7 +38,9 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({ filters, onFilters
             type="text"
             placeholder="Search jobs..."
             value={filters.query}
-            onChange={(e) => handleFilterChange('query', e.target.value)}
+          onChange={(e) => {
+            handleFilterChange('query', e.target.value)
+          }}
             className="search-input"
           />
           {hasActiveFilters && (

@@ -18,7 +18,10 @@ const mockJobAds: JobAd[] = [
     ],
     createdAt: '2025-01-10',
     citizenId: 'citizen-boss-1',
-    applications: []
+    applications: [],
+    phoneNumber: '555-0123',
+    streetName: 'Mission Row',
+    location: { x: 428.0, y: -984.0, z: 30.7 }
   },
   {
     id: '2',
@@ -34,7 +37,10 @@ const mockJobAds: JobAd[] = [
     ],
     createdAt: '2025-01-08',
     citizenId: 'citizen-boss-2',
-    applications: []
+    applications: [],
+    phoneNumber: '555-0456',
+    streetName: 'Strawberry Avenue',
+    location: { x: 287.0, y: -1282.0, z: 29.6 }
   },
   {
     id: '3',
@@ -51,7 +57,9 @@ const mockJobAds: JobAd[] = [
     ],
     createdAt: '2025-01-05',
     citizenId: 'citizen-boss-3',
-    applications: []
+    applications: [],
+    phoneNumber: '555-0789'
+    // No streetName/location for this one to test "Location not set"
   }
 ]
 
@@ -223,21 +231,31 @@ export const useJobHub = () => {
   }
 
   const getFilteredAds = (filters: SearchFilters) => {
-    return jobAds.filter(ad => {
-      const matchesQuery = !filters.query || 
-        ad.jobTitle.toLowerCase().includes(filters.query.toLowerCase()) ||
-        ad.jobDescription.toLowerCase().includes(filters.query.toLowerCase())
-      
-      const matchesPay = ad.hourlyPay >= filters.minPay && 
-        (filters.maxPay === 0 || ad.hourlyPay <= filters.maxPay)
-      
-      const matchesBusiness = !filters.businessName || 
-        ad.businessName.toLowerCase().includes(filters.businessName.toLowerCase())
-      
+    let filteredAds = jobAds.filter(ad => {
       const isNotExpired = new Date(ad.validUntilDate) > new Date()
-      
-      return matchesQuery && matchesPay && matchesBusiness && isNotExpired
+      return isNotExpired
     })
+
+    // Apply filters only if they have values
+    if (filters.query || filters.minPay > 0 || filters.maxPay > 0 || filters.businessName) {
+      filteredAds = filteredAds.filter(ad => {
+        const matchesQuery = !filters.query || 
+          ad.jobTitle.toLowerCase().includes(filters.query.toLowerCase()) ||
+          ad.jobDescription.toLowerCase().includes(filters.query.toLowerCase()) ||
+          ad.businessName.toLowerCase().includes(filters.query.toLowerCase())
+      
+        const matchesPay = ad.hourlyPay >= filters.minPay && 
+          (filters.maxPay === 0 || ad.hourlyPay <= filters.maxPay)
+      
+        const matchesBusiness = !filters.businessName || 
+          ad.businessName.toLowerCase().includes(filters.businessName.toLowerCase())
+      
+        return matchesQuery && matchesPay && matchesBusiness
+      })
+    }
+
+    // Sort by date, newest first
+    return filteredAds.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
   }
 
   return {

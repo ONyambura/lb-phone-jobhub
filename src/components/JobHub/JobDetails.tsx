@@ -1,5 +1,5 @@
 import React from 'react'
-import { X, MapPin, Clock, DollarSign, Calendar, Users, Heart } from 'lucide-react'
+import { X, MapPin, Clock, DollarSign, Calendar, Users, Heart, Phone, Navigation } from 'lucide-react'
 import { JobAd } from '../../types'
 import { format } from 'date-fns'
 
@@ -99,6 +99,55 @@ export const JobDetails: React.FC<JobDetailsProps> = ({
                 {job.photos.map((photo, index) => (
                   <img key={index} src={photo} alt={`Job photo ${index + 1}`} className="photo-full" />
                 ))}
+              </div>
+            </div>
+          )}
+
+          {(job.phoneNumber || job.streetName) && (
+            <div className="contact-info">
+              <h3>Contact Information</h3>
+              {job.phoneNumber && (
+                <div className="contact-item">
+                  <Phone size={16} />
+                  <span>{job.phoneNumber}</span>
+                </div>
+              )}
+              <div className="contact-item">
+                <MapPin size={16} />
+                <span>{job.streetName || 'Location not set'}</span>
+              </div>
+              
+              <div className="contact-actions">
+                {job.phoneNumber && (
+                  <button 
+                    className="btn btn-secondary"
+                    onClick={() => {
+                      if (typeof fetchNui !== 'undefined') {
+                        fetchNui('callNumber', { job, phoneNumber: job.phoneNumber })
+                      } else {
+                        console.log('Call:', job.phoneNumber)
+                      }
+                    }}
+                  >
+                    <Phone size={14} />
+                    Call
+                  </button>
+                )}
+                {job.location && (
+                  <button 
+                    className="btn btn-secondary"
+                    onClick={() => {
+                      if (typeof fetchNui !== 'undefined') {
+                        fetchNui('setGPS', { job, location: job.location })
+                      } else {
+                        console.log('Set GPS:', job.location)
+                      }
+                    }}
+                  >
+                    <Navigation size={14} />
+                    Set GPS
+                  </button>
+                )}
               </div>
             </div>
           )}

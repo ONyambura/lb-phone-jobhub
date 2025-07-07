@@ -18,7 +18,10 @@ export const CreateJobForm: React.FC<CreateJobFormProps> = ({ onClose, onSubmit,
     jobDescription: editingJob?.jobDescription || '',
     hourlyPay: editingJob?.hourlyPay || 25,
     validUntilDate: editingJob?.validUntilDate || '',
-    photos: editingJob?.photos || []
+    photos: editingJob?.photos || [],
+    phoneNumber: editingJob?.phoneNumber || '',
+    streetName: editingJob?.streetName || '',
+    location: editingJob?.location || null
   })
 
   const [newPhotoUrl, setNewPhotoUrl] = useState('')
@@ -116,6 +119,65 @@ export const CreateJobForm: React.FC<CreateJobFormProps> = ({ onClose, onSubmit,
               className="form-input"
               required
             />
+          </div>
+
+          <div className="form-group">
+            <label>Contact Phone *</label>
+            <input
+              type="tel"
+              value={formData.phoneNumber}
+              onChange={(e) => handleInputChange('phoneNumber', e.target.value)}
+              placeholder="555-0123"
+              className="form-input"
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Location</label>
+            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+              <input
+                type="text"
+                value={formData.streetName}
+                onChange={(e) => handleInputChange('streetName', e.target.value)}
+                placeholder="Street name or area"
+                className="form-input"
+                style={{ flex: 1 }}
+              />
+              <button
+                type="button"
+                className="btn btn-secondary btn-small"
+                onClick={() => {
+                  // This will send a message to Lua to get current position
+                  if (typeof fetchNui !== 'undefined') {
+                    fetchNui('getCurrentPosition').then((position: any) => {
+                      if (position) {
+                        setFormData(prev => ({
+                          ...prev,
+                          location: position.coords,
+                          streetName: position.streetName || prev.streetName
+                        }))
+                      }
+                    }).catch(() => {
+                      components.setPopUp({
+                        title: 'Error',
+                        description: 'Could not get current position.',
+                        buttons: [{ title: 'OK' }]
+                      })
+                    })
+                  } else {
+                    // Dev mode - mock position
+                    setFormData(prev => ({
+                      ...prev,
+                      location: { x: 100, y: 200, z: 30 },
+                      streetName: prev.streetName || 'Mock Street'
+                    }))
+                  }
+                }}
+              >
+                Pin Position
+              </button>
+            </div>
           </div>
 
           <div className="form-group">
