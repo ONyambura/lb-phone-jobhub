@@ -69,7 +69,7 @@ const mockConfig: AppConfig = {
   citizenId: 'citizen-123',
   businessId: 'business-1',
   businessLogo: 'https://images.pexels.com/photos/8728380/pexels-photo-8728380.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop',
-  isBoss: false
+  isBoss: true
 }
 
 export const useJobHub = () => {
